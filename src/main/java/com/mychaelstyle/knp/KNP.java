@@ -233,13 +233,12 @@ System.out.println("------------lines[0] "+lines[0]);
             String line = lines[i];
             String org = line.substring(0,line.indexOf(" "));
             buf.append(org);
-            ObjectNode morph = new ObjectNode(factory);
             String jumanStr = line.substring(0,line.indexOf("<"));
             String eTagsStr = line.substring(line.indexOf("<"));
             ObjectNode jumanResult = juman.parseLine(jumanStr);
             ArrayNode eAttributes = this.parseTagLine(eTagsStr);
             jumanResult.put("attributes", eAttributes);
-            morphs.add(morph);
+            morphs.add(jumanResult);
         }
         phrase.put("phrase",buf.toString());
         phrase.put("morphemes", morphs);
