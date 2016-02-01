@@ -28,7 +28,7 @@ public class KNPTest {
     public void testParse() {
         KNP knp = new KNP();
         try{
-            ObjectNode result = knp.parse("本システムは，計算機による日本語の解析の研究を目指す多くの研究者に共通に使える形態素解析ツールを提供するために開発されました。");
+            ObjectNode result = knp.parse("今日は講習会を受けています。");
             System.out.println(result.toString());
         } catch (IOException e) {
             e.printStackTrace();

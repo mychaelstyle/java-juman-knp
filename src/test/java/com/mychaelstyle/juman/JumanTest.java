@@ -38,7 +38,6 @@ public class JumanTest {
      */
     @Test
     public void testJumanStringString() {
-
     }
 
     /**

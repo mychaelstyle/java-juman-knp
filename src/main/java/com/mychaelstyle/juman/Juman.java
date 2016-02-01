@@ -184,7 +184,7 @@ public class Juman {
      * @param line JUMANが出力した形態素情報の行文字列
      * @return JacksonのObjectNodeインスタンス
      */
-    private ObjectNode parseLine(String line){
+    public ObjectNode parseLine(String line){
         JsonNodeFactory factory = JsonNodeFactory.instance;
         ObjectNode element = new ObjectNode(factory);
         ObjectNode meanings = new ObjectNode(factory);
