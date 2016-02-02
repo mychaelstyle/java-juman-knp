@@ -4,6 +4,6 @@
 .project
 .settings/
 bin/
-build.gradle
 gradle/
+build/
 

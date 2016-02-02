@@ -1,6 +1,8 @@
 # java-juman-knp
 ====
 
+[ ![Download](https://api.bintray.com/packages/mychaelstyle/maven/java-juman-knp/images/download.svg) ](https://bintray.com/mychaelstyle/maven/java-juman-knp/_latestVersion)
+
 京都大学発の形態素解析器jumanと構文解析器knpをjavaから実行して結果をJSONオブジェクトで取得するライブラリです。
 knpはまだ未実装なので出来たらv1.0にします。
 
@@ -21,9 +23,23 @@ http://nlp.ist.i.kyoto-u.ac.jp/?KNP
 
 ## How to use
 
-まだjumanしか実装していないのでknp実装次第、bintrayのmavenリポジトリを利用できるようにするつもりです。
-今はjarを作って使ってください。
-本プロジェクトをローカルにclone後、gradleかpomを使ってビルドできます。
+bintrayのMavenリポジトリで公開しています。
+mavenを利用する場合は (https://dl.bintray.com/mychaelstyle/maven/) をリポジトリに追加してください。
+
+gradleを利用する場合は下記のようにbuild.gradleに追加します。
+
+    repositories {
+        jcenter()
+        maven {
+            url "https://dl.bintray.com/mychaelstyle/maven/"
+        }
+    }
+
+dependenciesに下記を追加してください。
+
+    compile 'com.mychaelstyle:java-juman-knp:0.1.0-Final'
+
+下記のように利用できます。戻り値のJSONフォーマットは後述の通りです。
 
     // Jumanクラス
     Juman juman = new Juman();
@@ -32,9 +48,16 @@ http://nlp.ist.i.kyoto-u.ac.jp/?KNP
     // Jumanクラスでコマンドパスを指定してインスタンス化
     Juman juman = new Juman("/path/to/sh","/path/to/juman");
 
-## juman取得結果について
+    // KNPクラス
+    KNP knp = new KNP();
+    ObjectNode result = knp.parse("明日は晴れるでしょう。");
 
-JUMANの結果取得JSONフォーマット
+    // KNPクラスでコマンドパスを指定してインスタンス
+    KNP knp = new KNP("/path/to/sh","/path/to/juman","/path/to/knp");
+
+## 取得結果JSONのフォーマット
+
+### JUMANの結果取得JSONフォーマット
 
     {
         "result":"OK/ERROR",
@@ -63,9 +86,58 @@ JUMANの結果取得JSONフォーマット
             ...(形態素の数分繰り返し)...
         ]
 
-JUMANの結果取得JSONのサンプル
+### KNPの結果取得JSONフォーマット
 
-    本システムは，計算機による日本語の解析の研究を目指す多くの研究者に共通に使える形態素解析ツールを提供するために開発されました。
+    {
+        "DATE": "2016/02/01", 
+        "KNP": "4.16-CF1.1", 
+        "S-ID": "1", 
+        "SCORE": "-24.29238", 
+        "clauseas": [    // 文節配列
+            {
+                "clausea": "今日は",  // 文節の現表記
+                "target": "2D"
+                "attributes": [ ...  // 文節の属性情報 単要素は文字列で、ペア要素はオブジェクトで入る // .. ],
+                "phrases": [         // 基本句の情報配列
+                    {
+                        "phrase": "今日は", 
+                        "target": "3D",
+                        "attributes": [  // .. 基本句の属性情報 単要素は文字列、ペア要素はオブジェクト // ],
+                        "morphemes": [   // 形態素の配列
+                            {
+                                "attributes": [  // 形態素の属性情報 同上
+                                ], 
+                                "conjugated_form": "*",              // JUMANから
+                                "conjugated_form_number": "0",        // JUMANから
+                                "conjugated_form_type": "*",        // JUMANから
+                                "conjugated_form_type_number": "0",        // JUMANから
+                                "labels": [       // JUMANから
+                                    ""
+                                ], 
+                                "meanings": {       // JUMANから
+                                    "カテゴリ": "時間", 
+                                    "代表表記": "今日/きょう"
+                                }, 
+                                "part": "名詞",        // JUMANから
+                                "part_detail": "時相名詞",        // JUMANから
+                                "part_detail_number": "10",        // JUMANから
+                                "part_number": "6",        // JUMANから
+                                "prototype": "今日",        // JUMANから
+                                "reading": "きょう",        // JUMANから
+                                "signage": "今日"       // JUMANから
+                            }, 
+                        ]
+                    }
+                ],
+                ... 基本句の数だけ繰り返し
+            }, 
+            ... 文節分繰り返し
+        ]
+    }
+
+## 結果サンプル
+
+### JUMANの結果取得JSONのサンプル
 
     {
         "message": "", 
@@ -742,58 +814,7 @@ JUMANの結果取得JSONのサンプル
         "result": "OK"
     }
 
-## knpの取得結果について
-
-### 出力JSONフォーマット
-
-    {
-        "DATE": "2016/02/01", 
-        "KNP": "4.16-CF1.1", 
-        "S-ID": "1", 
-        "SCORE": "-24.29238", 
-        "clauseas": [    // 文節配列
-            {
-                "clausea": "今日は",  // 文節の現表記
-                "target": "2D"
-                "attributes": [ ...  // 文節の属性情報 単要素は文字列で、ペア要素はオブジェクトで入る // .. ],
-                "phrases": [         // 基本句の情報配列
-                    {
-                        "phrase": "今日は", 
-                        "target": "3D",
-                        "attributes": [  // .. 基本句の属性情報 単要素は文字列、ペア要素はオブジェクト // ],
-                        "morphemes": [   // 形態素の配列
-                            {
-                                "attributes": [  // 形態素の属性情報 同上
-                                ], 
-                                "conjugated_form": "*",              // JUMANから
-                                "conjugated_form_number": "0",        // JUMANから
-                                "conjugated_form_type": "*",        // JUMANから
-                                "conjugated_form_type_number": "0",        // JUMANから
-                                "labels": [       // JUMANから
-                                    ""
-                                ], 
-                                "meanings": {       // JUMANから
-                                    "カテゴリ": "時間", 
-                                    "代表表記": "今日/きょう"
-                                }, 
-                                "part": "名詞",        // JUMANから
-                                "part_detail": "時相名詞",        // JUMANから
-                                "part_detail_number": "10",        // JUMANから
-                                "part_number": "6",        // JUMANから
-                                "prototype": "今日",        // JUMANから
-                                "reading": "きょう",        // JUMANから
-                                "signage": "今日"       // JUMANから
-                            }, 
-                        ]
-                    }
-                ],
-                ... 基本句の数だけ繰り返し
-            }, 
-            ... 文節分繰り返し
-        ]
-    }
-
-### 出力サンプル
+### KNPの取得結果サンプル
 
     {
         "DATE": "2016/02/01", 
