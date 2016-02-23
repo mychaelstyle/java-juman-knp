@@ -1,4 +1,4 @@
-package com.mychaelstyle.knp;
+package com.mychaelstyle.nlp;
 
 import static org.junit.Assert.*;
 
@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.mychaelstyle.nlp.KNP;
 
 public class KNPTest {
 

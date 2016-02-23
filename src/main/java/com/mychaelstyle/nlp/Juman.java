@@ -1,4 +1,4 @@
-package com.mychaelstyle.juman;
+package com.mychaelstyle.nlp;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,10 +7,6 @@ import java.io.InputStreamReader;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
-/**
- * 
- */
 
 /**
  * JUMANのJavaラッパークラスです。

@@ -1,4 +1,4 @@
-package com.mychaelstyle.knp;
+package com.mychaelstyle.nlp;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,14 +9,13 @@ import java.util.List;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.mychaelstyle.juman.Juman;
 
 /**
  * 
  */
 
 /**
- * KNPのJavaラッパークラスです。
+ * KNPコマンドのJavaラッパークラスです。
  * 
  * http://nlp.ist.i.kyoto-u.ac.jp/index.php?cmd=read&page=JUMAN&alias%5B%5D=%E6%97%A5%E6%9C%AC%E8%AA%9E%E5%BD%A2%E6%85%8B%E7%B4%A0%E8%A7%A3%E6%9E%90%E3%82%B7%E3%82%B9%E3%83%86%E3%83%A0JUMAN
  * 
@@ -43,9 +42,18 @@ public class KNP {
      */
     private String pathKnp = PATH_KNP;
 
+    /**
+     * コンストラクタ
+     */
     public KNP(){
         super();
     }
+    /**
+     * コンストラクタ
+     * @param pathShell shコマンドへのパス文字列
+     * @param pathJuman jumanコマンドへのパス文字列
+     * @param pathKnp knpコマンドへのパス文字列
+     */
     public KNP(String pathShell,String pathJuman,String pathKnp){
         super();
         this.pathShell = pathShell;
@@ -171,6 +179,11 @@ System.out.println(cmd);
         return node;
     }
 
+    /**
+     * 文節の解析結果をパース
+     * @param str 文節の解析結果文字列
+     * @return
+     */
     private ObjectNode parseClausea(String str){
         JsonNodeFactory factory = JsonNodeFactory.instance;
         ObjectNode clausea = new ObjectNode(factory);
@@ -209,8 +222,8 @@ System.out.println();
     }
 
     /**
-     * 
-     * @param str
+     * フレーズの解析結果文字列をパース
+     * @param str フレーズの解析結果文字列
      * @return
      */
     private ObjectNode parsePhrase(String str){
