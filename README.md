@@ -4,7 +4,6 @@
 [ ![Download](https://api.bintray.com/packages/mychaelstyle/maven/java-juman-knp/images/download.svg) ](https://bintray.com/mychaelstyle/maven/java-juman-knp/_latestVersion)
 
 京都大学発の形態素解析器jumanと構文解析器knpをjavaから実行して結果をJSONオブジェクトで取得するライブラリです。
-knpはまだ未実装なので出来たらv1.0にします。
 
 JSONの生成はjacksonを利用しています。
 
