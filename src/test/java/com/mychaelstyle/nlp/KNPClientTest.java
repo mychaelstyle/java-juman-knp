@@ -10,9 +10,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.mychaelstyle.nlp.KNP;
+import com.mychaelstyle.nlp.KNPClient;
 
-public class KNPTest {
+public class KNPClientTest {
 
     @Before
     public void setUp() throws Exception {
@@ -28,15 +28,19 @@ public class KNPTest {
 
     @Test
     public void testParse() {
-        KNP knp = new KNP();
+        KNPClient knp = new KNPClient();
         try{
+            knp.connect(5);
             ObjectNode result = knp.parse("今日は講習会を受けています。");
-            System.out.println(result.toString());
+System.out.println("\n\n");
+System.out.println(result.toString());
             assertThat(result,notNullValue());
         } catch (IOException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
             e.printStackTrace();
+        } finally {
+            knp.close();
         }
     }
 

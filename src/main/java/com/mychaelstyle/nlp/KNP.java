@@ -107,7 +107,6 @@ public class KNP {
         if(null==pathKnp || pathKnp.isEmpty()) pathKnp = PATH_KNP;
         String cmd = "echo \""+target+"\" | "+ this.pathJuman
                 +" -e2 | "+pathKnp + " -tab";
-System.out.println(cmd);
         String[] cmdarray = {pathShell, "-c", cmd};
         Process process = Runtime.getRuntime().exec(cmdarray);
         process.waitFor();
@@ -184,7 +183,7 @@ System.out.println(cmd);
      * @param str 文節の解析結果文字列
      * @return
      */
-    private ObjectNode parseClausea(String str){
+    protected ObjectNode parseClausea(String str){
         JsonNodeFactory factory = JsonNodeFactory.instance;
         ObjectNode clausea = new ObjectNode(factory);
         String[] lines = str.split("\n");
@@ -196,8 +195,6 @@ System.out.println(cmd);
         String tags = lines[0].substring(lines[0].indexOf("<")).trim();
         ArrayNode attributes = this.parseTagLine(tags);
         clausea.put("attributes", attributes);
-System.out.println(clausea.toString());
-System.out.println();
 
         // 文節の中身の基本句を分析
         ArrayNode phrases = new ArrayNode(factory);
@@ -226,13 +223,11 @@ System.out.println();
      * @param str フレーズの解析結果文字列
      * @return
      */
-    private ObjectNode parsePhrase(String str){
-System.out.println("------------ "+str);
+    protected ObjectNode parsePhrase(String str){
         JsonNodeFactory factory = JsonNodeFactory.instance;
         ObjectNode phrase = new ObjectNode(factory);
         String[] lines = str.split("\n");
         // 係り先
-System.out.println("------------lines[0] "+lines[0]);
         String target = lines[0].substring(1, lines[0].indexOf("<")).trim();
         phrase.put("target", target);
         String tags = lines[0].substring(lines[0].indexOf("<")).trim();
@@ -263,7 +258,7 @@ System.out.println("------------lines[0] "+lines[0]);
      * @param str
      * @return
      */
-    private ArrayNode parseTagLine(String str){
+    protected ArrayNode parseTagLine(String str){
         JsonNodeFactory factory = JsonNodeFactory.instance;
         ArrayNode attributes = new ArrayNode(factory);
         str = str.substring(1, str.length());

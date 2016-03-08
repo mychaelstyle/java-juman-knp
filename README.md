@@ -21,6 +21,12 @@ http://nlp.ist.i.kyoto-u.ac.jp/?KNP
 - java >=8
 - gradle >=2.3
 
+## change log
+
+- ver0.2 2016-03-05 KNPサーバモードを利用するためのKNPClientクラスを追加しました。 
+- ver0.2 2016-02-23 Jumanサーバモードを利用するためのJumanClientクラスを追加しました。 
+- ver0.2 2016-02-23 パッケージ名をcom.mychaelstyle.nlpに変更しました。
+
 ## How to use
 
 bintrayのMavenリポジトリで公開しています。
