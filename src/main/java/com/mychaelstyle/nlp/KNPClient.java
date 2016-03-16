@@ -95,7 +95,7 @@ public class KNPClient extends KNP {
             for (;;) {
                 String line = br.readLine();
                 if (line == null || "EOS".equalsIgnoreCase(line.trim())) break;
-System.out.println(line);
+//System.out.println(line);
                 if("200 Running KNP Server".equalsIgnoreCase(line)
                         || line.startsWith("200 OK")){
                     // TODO: server connection status
