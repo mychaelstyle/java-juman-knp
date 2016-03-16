@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -117,9 +118,10 @@ public class JumanClient extends Juman {
      */
     public ObjectNode parse(String target, boolean connect) throws IOException, InterruptedException {
         Socket socket = null;
-        boolean usePool = false;
         try{
-            if(connected){
+            if(connect){
+                socket = new Socket(this.host, this.port);
+            } else if(connected){
                 int counter = 0;
                 while(true){
                     if(counter>100) throw new IOException("fail to get a connection.");
@@ -130,22 +132,22 @@ public class JumanClient extends Juman {
                     Thread.sleep(100);
                 }
                 synchronized(socketQueue){
-                    usePool = true;
                     socket = socketQueue.poll();
                 }
-            } else if(connect){
-                socket = new Socket(this.host, this.port);
+                if(socket.isClosed()){
+                    socket.connect(new InetSocketAddress(this.host,this.port));
+                }
             } else {
                 throw new IOException("not connected yet!");
             }
             return parse(target,socket);
         }finally{
-            if(usePool){
+            if(connect && null!=socket && !socket.isClosed()){
+                socket.close();
+            } else if(null!=socket && !socket.isClosed()){
                 synchronized(socketQueue){
                     socketQueue.add(socket);
                 }
-            } else if(null!=socket && !socket.isClosed()) {
-                socket.close();
             }
         }
     }

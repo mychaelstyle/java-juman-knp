@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -110,11 +111,20 @@ public class KNPClient extends KNP {
         return this.parse(target,false);
     }
 
+    /**
+     * parse
+     * @param target
+     * @param connect
+     * @return
+     * @throws IOException
+     * @throws InterruptedException
+     */
     public ObjectNode parse(String target,Boolean connect) throws IOException, InterruptedException {
         Socket socket = null;
-        boolean usePool = false;
         try{
-            if(connected){
+            if(connect){
+                socket = new Socket(this.host, this.port);
+            } else if(connected){
                 int counter = 0;
                 while(true){
                     if(counter>100) throw new IOException("fail to get a connection.");
@@ -125,22 +135,22 @@ public class KNPClient extends KNP {
                     Thread.sleep(100);
                 }
                 synchronized(socketQueue){
-                    usePool = true;
                     socket = socketQueue.poll();
                 }
-            } else if(connect){
-                socket = new Socket(this.host, this.port);
+                if(socket.isClosed()){
+                    socket.connect(new InetSocketAddress(this.host,this.port));
+                }
             } else {
                 throw new IOException("not connected yet!");
             }
             return parse(target,socket);
         }finally{
-            if(usePool){
+            if(connect && null!=socket && !socket.isClosed()) {
+                socket.close();
+            } else if(null!=socket && !socket.isClosed()){
                 synchronized(socketQueue){
                     socketQueue.add(socket);
                 }
-            } else if(null!=socket && !socket.isClosed()) {
-                socket.close();
             }
         }
     }
@@ -175,6 +185,7 @@ public class KNPClient extends KNP {
             for (;;) {
                 String line = br.readLine();
                 if (line == null || "EOS".equalsIgnoreCase(line.trim())) break;
+System.out.println(line);
                 if("200 Running KNP Server".equalsIgnoreCase(line)
                         || line.startsWith("200 OK")){
                     // TODO: server connection status
