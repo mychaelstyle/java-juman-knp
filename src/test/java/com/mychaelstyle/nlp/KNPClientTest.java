@@ -30,17 +30,32 @@ public class KNPClientTest {
     public void testParse() {
         KNPClient knp = new KNPClient();
         try{
-            knp.connect(5);
             ObjectNode result = knp.parse("今日は講習会を受けています。");
 System.out.println("\n\n");
 System.out.println(result.toString());
             assertThat(result,notNullValue());
+            result = knp.parse("今日は講習会を受けています。");
+            result = knp.parse("今日は講習会を受けています。");
+            result = knp.parse("今日は講習会を受けています。");
+            result = knp.parse("今日は講習会を受けています。");
+            result = knp.parse("今日は講習会を受けています。");
+            result = knp.parse("今日は講習会を受けています。");
+            result = knp.parse("今日は講習会を受けています。");
+            result = knp.parse("今日は講習会を受けています。");
+            result = knp.parse("今日は講習会を受けています。");
+            result = knp.parse("今日は講習会を受けています。");
+            result = knp.parse("今日は講習会を受けています。");
+            result = knp.parse("今日は講習会を受けています。");
+            result = knp.parse("今日は講習会を受けています。");
+            result = knp.parse("今日は講習会を受けています。");
+            result = knp.parse("今日は講習会を受けています。");
+            result = knp.parse("今日は講習会を受けています。");
+            result = knp.parse("今日は講習会を受けています。");
         } catch (IOException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
-            knp.close();
         }
     }
 

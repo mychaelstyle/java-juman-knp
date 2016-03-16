@@ -8,10 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.util.LinkedList;
-import java.util.Queue;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
@@ -29,8 +26,6 @@ public class JumanClient extends Juman {
 
     public static final String HOST_DEFAULT = "localhost";
     public static final Integer PORT_DEFAULT = 32000;
-    private static Boolean connected = false;
-    private static Queue<Socket> socketQueue = new LinkedList<Socket>();
     private String host = HOST_DEFAULT;
     private Integer port = PORT_DEFAULT;
 
@@ -53,101 +48,18 @@ public class JumanClient extends Juman {
         this.port = port;
     }
 
-    /**
-     * サーバーにソケット接続して接続をプール
-     * @param pool
-     * @throws IOException
-     */
-    public void connect(Integer pool) throws IOException {
-        synchronized(socketQueue){
-            if(socketQueue.size()>pool){
-                while(socketQueue.size()>pool){
-                    Socket socket = socketQueue.poll();
-                    if(null!=socket && !socket.isClosed()){
-                        try{
-                            socket.close();
-                        } catch(Exception e){
-                            // TODO log
-                        }
-                    }
-                }
-            } else {
-                while(socketQueue.size()<pool){
-                    Socket socket = new Socket(this.host, this.port);
-                    socketQueue.add(socket);
-                }
-            }
-            connected = true;
-        }
-    }
-
-    /**
-     * サーバーからソケット接続を切断
-     */
-    public void close(){
-        synchronized(socketQueue){
-            while(socketQueue.size()>0){
-                Socket socket = socketQueue.poll();
-                if(null!=socket && !socket.isClosed()){
-                    try{
-                        socket.close();
-                    } catch(Exception e){
-                        // TODO log
-                    }
-                }
-            }
-            connected = false;
-        }
-    }
-
     /* (non-Javadoc)
      * @see com.mychaelstyle.nlp.Juman#parse(java.lang.String)
      */
     @Override
     public ObjectNode parse(String target) throws IOException, InterruptedException {
-        return parse(target,false);
-    }
-
-    /**
-     * パースします。第２引数をtrueにすると、コネクションプールがない場合は新規で接続し切断することができます。
-     * @param target パース対象文字列
-     * @param connect コネクションプールがない場合に接続するならtrue
-     * @return
-     * @throws IOException
-     * @throws InterruptedException
-     */
-    public ObjectNode parse(String target, boolean connect) throws IOException, InterruptedException {
         Socket socket = null;
         try{
-            if(connect){
-                socket = new Socket(this.host, this.port);
-            } else if(connected){
-                int counter = 0;
-                while(true){
-                    if(counter>100) throw new IOException("fail to get a connection.");
-                    synchronized(socketQueue){
-                        if(socketQueue.size()>0) break;
-                    }
-                    counter++;
-                    Thread.sleep(100);
-                }
-                synchronized(socketQueue){
-                    socket = socketQueue.poll();
-                }
-                if(socket.isClosed()){
-                    socket.connect(new InetSocketAddress(this.host,this.port));
-                }
-            } else {
-                throw new IOException("not connected yet!");
-            }
+            socket = new Socket(this.host, this.port);
             return parse(target,socket);
         }finally{
-            if(connect && null!=socket && !socket.isClosed()){
+            if(null!=socket && !socket.isClosed()){
                 socket.close();
-            } else if(null!=socket && !socket.isClosed()){
-                synchronized(socketQueue){
-                    socketQueue.add(socket);
-                }
             }
         }
     }
@@ -212,43 +124,17 @@ public class JumanClient extends Juman {
     }
 
     public String getResult(String target) throws IOException, InterruptedException {
-        return getResult(target,false);
-    }
-
-    public String getResult(String target, Boolean connect) throws IOException, InterruptedException {
         Socket socket = null;
-        boolean usePool = false;
         try{
-            if(connected){
-                int counter = 0;
-                while(true){
-                    if(counter>100) throw new IOException("fail to get a connection.");
-                    synchronized(socketQueue){
-                        if(socketQueue.size()>0) break;
-                    }
-                    counter++;
-                    Thread.sleep(100);
-                }
-                synchronized(socketQueue){
-                    usePool = true;
-                    socket = socketQueue.poll();
-                }
-            } else if(connect){
-                socket = new Socket(this.host, this.port);
-            } else {
-                throw new IOException("not connected yet!");
-            }
+            socket = new Socket(this.host, this.port);
             return getResult(target,socket);
         }finally{
-            if(usePool){
-                synchronized(socketQueue){
-                    socketQueue.add(socket);
-                }
-            } else if(null!=socket && !socket.isClosed()) {
+            if(null!=socket && !socket.isClosed()) {
                 socket.close();
             }
         }
     }
+
     public String getResult(String target, Socket socket) throws IOException, InterruptedException {
         StringBuffer buf = new StringBuffer();
         PrintWriter pw = null;

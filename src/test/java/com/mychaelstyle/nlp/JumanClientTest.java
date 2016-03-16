@@ -25,7 +25,6 @@ public class JumanClientTest {
     public void testParse() {
         JumanClient juman = new JumanClient();
         try {
-            juman.connect(5);
             ObjectNode result = juman.parse(
                     "本システムは，計算機による日本語の解析の研究を目指す多くの研究者に共通に使える形態素解析ツールを提供するために開発されました。");
             assertThat(result,notNullValue());
@@ -36,7 +35,34 @@ public class JumanClientTest {
 
             result = juman.parse("人手で整備した辞書に基づいており、ChaSenの元となったシステム。");
             System.out.println(result.toString());
-
+            result = juman.parse("人手で整備した辞書に基づいており、ChaSenの元となったシステム。");
+            System.out.println(result.toString());
+            result = juman.parse("人手で整備した辞書に基づいており、ChaSenの元となったシステム。");
+            System.out.println(result.toString());
+            result = juman.parse("人手で整備した辞書に基づいており、ChaSenの元となったシステム。");
+            System.out.println(result.toString());
+            result = juman.parse("人手で整備した辞書に基づいており、ChaSenの元となったシステム。");
+            System.out.println(result.toString());
+            result = juman.parse("人手で整備した辞書に基づいており、ChaSenの元となったシステム。");
+            System.out.println(result.toString());
+            result = juman.parse("人手で整備した辞書に基づいており、ChaSenの元となったシステム。");
+            System.out.println(result.toString());
+            result = juman.parse("人手で整備した辞書に基づいており、ChaSenの元となったシステム。");
+            System.out.println(result.toString());
+            result = juman.parse("人手で整備した辞書に基づいており、ChaSenの元となったシステム。");
+            System.out.println(result.toString());
+            result = juman.parse("人手で整備した辞書に基づいており、ChaSenの元となったシステム。");
+            System.out.println(result.toString());
+            result = juman.parse("人手で整備した辞書に基づいており、ChaSenの元となったシステム。");
+            System.out.println(result.toString());
+            result = juman.parse("人手で整備した辞書に基づいており、ChaSenの元となったシステム。");
+            System.out.println(result.toString());
+            result = juman.parse("人手で整備した辞書に基づいており、ChaSenの元となったシステム。");
+            System.out.println(result.toString());
+            result = juman.parse("人手で整備した辞書に基づいており、ChaSenの元となったシステム。");
+            System.out.println(result.toString());
+            result = juman.parse("人手で整備した辞書に基づいており、ChaSenの元となったシステム。");
+            System.out.println(result.toString());
         } catch (IOException e) {
             e.printStackTrace();
             fail(e.getMessage());
@@ -44,7 +70,6 @@ public class JumanClientTest {
             e.printStackTrace();
             fail(e.getMessage());
         } finally {
-            juman.close();
         }
     }
 
