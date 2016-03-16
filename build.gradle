@@ -30,7 +30,7 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 group = 'com.mychaelstyle'
 archivesBaseName = 'java-juman-knp' 
-version = '0.2.0'
+version = '0.3.0'
 
 // In this section you declare where to find the dependencies of your project
 repositories {
@@ -103,7 +103,7 @@ publishing {
       from components.java
       groupId 'com.mychaelstyle'
       artifactId 'java-juman-knp'
-      version '0.2.0'
+      version '0.3.0'
     }
   }
 }
@@ -131,9 +131,9 @@ bintray {
     publicDownloadNumbers = true
 
     version {
-      name = '0.2.0'
-      desc = 'Java wrapper for JUMAN,KNP 0.1.0 final'
-      vcsTag = '0.1.0'
+      name = '0.3.0'
+      desc = 'Java wrapper for JUMAN,KNP 0.3.0'
+      vcsTag = '0.3.0'
     }
   }
 }
