@@ -94,9 +94,10 @@ public class JumanClient extends Juman {
                 Thread.sleep(100);
                 c++;
             }
-            for (;;) {
+            for (int num=0;;num++) {
                 String line = br.readLine();
                 if (line == null || "EOS".equalsIgnoreCase(line.trim())) break;
+                if(num<2 && null!=line && line.startsWith("200")) continue;
                 ObjectNode morpheme = this.parseLine(line);
                 morphs.add(morpheme);
             }

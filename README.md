@@ -42,7 +42,7 @@ gradleを利用する場合は下記のようにbuild.gradleに追加します�
 
 dependenciesに下記を追加してください。
 
-    compile 'com.mychaelstyle:java-juman-knp:0.1.0-Final'
+    compile 'com.mychaelstyle:java-juman-knp:1.0.1'
 
 下記のように利用できます。戻り値のJSONフォーマットは後述の通りです。
 
@@ -52,6 +52,9 @@ dependenciesに下記を追加してください。
 
     // Jumanクラスでコマンドパスを指定してインスタンス化
     Juman juman = new Juman("/path/to/sh","/path/to/juman");
+
+    // JumanClientクラス
+    Juman juman = new JumanClient('host',port);
 
     // KNPクラス
     KNP knp = new KNP();
