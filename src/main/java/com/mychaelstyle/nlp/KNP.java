@@ -108,66 +108,106 @@ public class KNP {
         String cmd = "echo \""+target+"\" | "+ this.pathJuman
                 +" -e2 | "+pathKnp + " -tab";
         String[] cmdarray = {pathShell, "-c", cmd};
-        Process process = Runtime.getRuntime().exec(cmdarray);
-        process.waitFor();
 
-        InputStream is = null;
-        BufferedReader br = null;
+		// start an external process
+		ProcessBuilder processBuilder = new ProcessBuilder(cmdarray);
+		Process process = processBuilder.start();
+
         StringBuffer errorBuf = new StringBuffer();
-        // handle errors
-        try {
-            is = process.getErrorStream();
-            br = new BufferedReader(new InputStreamReader(is));
-            for (;;) {
-                String line = br.readLine();
-                if (line == null) break;
-                errorBuf.append(line).append("\n");
-            }
-            if(errorBuf.length()>0){
-                node.put("result", "ERROR");
-                node.put("message",errorBuf.toString());
-                return node;
-            }
-        } finally {
-            br.close();
-            is.close();
-        }
+
+		// make an error handling thread
+		InputStream errorStream = process.getErrorStream();
+		Runnable r1 = new Runnable() {
+			@Override
+			public void run() {
+				BufferedReader br = new BufferedReader(new InputStreamReader(errorStream));
+				try {
+					for (;;) {
+						String line = br.readLine();
+						if (line == null)
+							break;
+						errorBuf.append(line).append("\n");
+					}
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				} finally {
+					try {
+						br.close();
+						errorStream.close();
+					} catch (IOException e) {
+						throw new RuntimeException(e);
+					}
+				}
+			}
+		};
+		Thread t1 = new Thread(r1);
+
         // get results
         // 一回全部文節で分けるよー
         List<String> clauseaList = new ArrayList<String>();
         StringBuffer clauseaBuf = new StringBuffer();
-        try {
-            is = process.getInputStream();
-            br = new BufferedReader(new InputStreamReader(is));
-            for (;;) {
-                String line = br.readLine();
-                if (line == null || "EOS".equalsIgnoreCase(line)) break;
-                if(line.startsWith("#")){
-                    line = line.substring(1, line.length()).trim();
-                    String[] ress = line.split(" ");
-                    node.put("S-ID", ress[0].replace("S-ID:", ""));
-                    node.put("KNP", ress[1].replace("KNP:", ""));
-                    node.put("DATE", ress[2].replace("DATE:", ""));
-                    node.put("SCORE", ress[3].replace("SCORE:", ""));
-                } else {
-                    if(line.startsWith("*")){
-                        if(clauseaBuf.length()>0){
-                            clauseaList.add(clauseaBuf.toString());
-                        }
-                        clauseaBuf = new StringBuffer();
-                        clauseaBuf.append(line);
-                    } else {
-                        clauseaBuf.append("\n"+line);
-                    }
-                }
-            }
-            if(clauseaBuf.length()>0){
-                clauseaList.add(clauseaBuf.toString());
-            }
-        }finally{
-            br.close();
-            is.close();
-        }
+
+		// make a result handling thread
+		InputStream inputStream = process.getInputStream();
+		Runnable r2 = new Runnable() {
+			@Override
+			public void run() {
+				BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
+				try {
+					for (;;) {
+						String line = br.readLine();
+						if (line == null || "EOS".equalsIgnoreCase(line))
+							break;
+						if (line.startsWith("#")) {
+							line = line.substring(1, line.length()).trim();
+							String[] ress = line.split(" ");
+							node.put("S-ID", ress[0].replace("S-ID:", ""));
+							node.put("KNP", ress[1].replace("KNP:", ""));
+							node.put("DATE", ress[2].replace("DATE:", ""));
+							node.put("SCORE", ress[3].replace("SCORE:", ""));
+						} else {
+							if (line.startsWith("*")) {
+								if (clauseaBuf.length() > 0) {
+									clauseaList.add(clauseaBuf.toString());
+								}
+								clauseaBuf.setLength(0);
+								clauseaBuf.append(line);
+							} else {
+								clauseaBuf.append("\n" + line);
+							}
+						}
+					}
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				} finally {
+					try {
+						br.close();
+						inputStream.close();
+					} catch (IOException e) {
+						throw new RuntimeException(e);
+					}
+				}
+			}
+		};
+		Thread t2 = new Thread(r2);
+
+		t1.start();
+		t2.start();
+
+		process.waitFor();
+
+		t1.join();
+		if (errorBuf.length() > 0) {
+			node.put("result", "ERROR");
+			node.put("message", errorBuf.toString());
+			return node;
+		}
+
+		t2.join();
+		if (clauseaBuf.length() > 0) {
+			clauseaList.add(clauseaBuf.toString());
+		}
+
         // 文節ごとに内容をパースするよー
         ArrayNode clauseas = new ArrayNode(factory);
         for(String str:clauseaList){
